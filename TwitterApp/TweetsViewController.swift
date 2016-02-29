@@ -8,9 +8,11 @@
 
 import UIKit
 
-class TweetsViewController: UIViewController {
+class TweetsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
     var tweets: [Tweet]!
+    
+    @IBOutlet weak var tableView: UITableView!
     
     @IBAction func onLogOutButton(sender: AnyObject) {
         TwitterClient.sharedInstance.logout()
@@ -18,10 +20,14 @@ class TweetsViewController: UIViewController {
     }
     override func viewDidLoad() {
         super.viewDidLoad()
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.rowHeight = UITableViewAutomaticDimension
+        tableView.estimatedRowHeight = 120
 
         TwitterClient.sharedInstance.homeTimeLine({ (tweets: [Tweet]) -> () in
             self.tweets = tweets
-            
+            self.tableView.reloadData()
             }) { (error: NSError) -> () in
                 print("error: \(error.localizedDescription)")
         }
@@ -32,6 +38,20 @@ class TweetsViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
+    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCellWithIdentifier("TwitterCell", forIndexPath: indexPath) as! TwitterCell
+        cell.tweet = tweets[indexPath.row]
+        return cell
+    }
+    
+    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if tweets != nil {
+            print(tweets!.count)
+            return tweets!.count
+        } else {
+            return 0
+        }
+    }
 
     /*
     // MARK: - Navigation
