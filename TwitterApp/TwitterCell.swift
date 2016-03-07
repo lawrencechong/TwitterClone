@@ -24,6 +24,10 @@ class TwitterCell: UITableViewCell {
     
     @IBOutlet weak var retweetCountLabel: UILabel!
     
+    @IBOutlet weak var likeButton: UIButton!
+    
+    @IBOutlet weak var retweetButton: UIButton!
+    
     var tweet : Tweet! {
         didSet {
             nameLabel.text = tweet.user?.name as? String
@@ -44,13 +48,29 @@ class TwitterCell: UITableViewCell {
                 profileImageView.setImageWithURL((tweet.user?.profile_url)!)
             }
             
+            let tapped = UITapGestureRecognizer(target: self, action:Selector("tapped:"))
+            profileImageView.addGestureRecognizer(tapped)
+            profileImageView.userInteractionEnabled = true
+
+            likeButton.setTitle(nil, forState: UIControlState.Normal)
+            retweetButton.setTitle(nil, forState: UIControlState.Normal)
+            
             if tweet.retweeted == true {
-                retweetCountLabel.textColor = UIColor.purpleColor()
+                retweetButton.setImage(UIImage(named: "retweeted.png"), forState: UIControlState.Normal)
+                retweetButton.tintColor = UIColor.greenColor()
+            } else{
+                retweetButton.setImage(UIImage(named: "retweet.png"), forState: UIControlState.Normal)
+                retweetButton.tintColor = UIColor.blueColor()
             }
             
             if tweet.favorited == true {
-                likeCountLabel.textColor = UIColor.orangeColor()
+                likeButton.setImage(UIImage(named: "star_filled.png"), forState: UIControlState.Normal)
+                likeButton.tintColor = UIColor.yellowColor()
+            } else{
+                likeButton.setImage(UIImage(named: "star_unfilled.png"), forState: UIControlState.Normal)
+                likeButton.tintColor = UIColor.blueColor()
             }
+            
         }
     }
     
@@ -64,49 +84,56 @@ class TwitterCell: UITableViewCell {
         super.layoutSubviews()
     }
     
+    func tapped(sender: UITapGestureRecognizer)
+    {
+        print("I went through here")
+        //return self.tweet
+    }
     
     @IBAction func onRetweetButton(sender: AnyObject) {
         if tweet.retweeted == false { //retweet it!
             TwitterClient.sharedInstance.retweet(tweet.id! as String, completion: { (tweet: Tweet?, error: NSError?) -> () in
                 if tweet != nil {
                     self.retweetCountLabel.text = String(tweet!.retweet)
-                    self.retweetCountLabel.textColor = UIColor.greenColor()
+                    self.retweetButton.setImage(UIImage(named: "retweeted.png"), forState: UIControlState.Normal)
+                    self.retweetButton.tintColor = UIColor.greenColor()
                 }
             })
         } else { //unretweet it
             TwitterClient.sharedInstance.unretweet(tweet.id! as String, completion: { (tweet: Tweet?, error: NSError?) -> () in
                 if tweet != nil {
                     self.retweetCountLabel.text = String(tweet!.retweet)
-                    self.retweetCountLabel.textColor = UIColor.blueColor()
+                    self.retweetButton.setImage(UIImage(named: "retweet.png"), forState: UIControlState.Normal)
+                    self.retweetButton.tintColor = UIColor.blueColor()
+    
                 }            })
         }
     }
     
     @IBAction func onLikeButton(sender: AnyObject) {
-        if tweet.favorited == false {
+        if tweet.favorited == false { //like it
             TwitterClient.sharedInstance.favorite(["id" : tweet.id!], completion: { (tweet: Tweet?, error: NSError?) -> () in
                 if tweet != nil {
                     self.likeCountLabel.text = String(tweet!.favorites_count)
-                    self.likeCountLabel.textColor = UIColor.redColor()
+                    self.likeButton.setImage(UIImage(named: "star_filled.png"), forState: UIControlState.Normal)
+                    self.likeButton.tintColor = UIColor.yellowColor()
                 }
             })
-        } else {
+        } else {//unlike it
             TwitterClient.sharedInstance.unfavorite(["id" : tweet.id!], completion: { (tweet: Tweet?, error: NSError?) -> () in
                 if tweet != nil {
                     self.likeCountLabel.text = String(tweet!.favorites_count)
-                    self.likeCountLabel.textColor = UIColor.blueColor()
+                    self.likeButton.setImage(UIImage(named: "star_unfilled.png"), forState: UIControlState.Normal)
+                    self.likeButton.tintColor = UIColor.blueColor()
                 }
             })
         }
-        
-        
     }
     
     
     override func setSelected(selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-        
-        // Configure the view for the selected state
+
     }
     
 }
