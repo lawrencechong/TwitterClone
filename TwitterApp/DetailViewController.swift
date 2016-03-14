@@ -89,6 +89,7 @@
                     self.numberofretweetsLabel.text = String(tweet!.retweet)
                     self.retweetButton.setImage(UIImage(named: "retweeted.png"), forState: UIControlState.Normal)
                     self.retweetButton.tintColor = UIColor.greenColor()
+                    self.tweet.retweeted = true
                 }
             })
         } else { //unretweet it
@@ -97,6 +98,7 @@
                     self.numberofretweetsLabel.text = String(tweet!.retweet)
                     self.retweetButton.setImage(UIImage(named: "retweet.png"), forState: UIControlState.Normal)
                     self.retweetButton.tintColor = UIColor.blueColor()
+                    self.tweet.retweeted = false
                     
                 }            })
         }
@@ -110,6 +112,7 @@
                     self.numberoflikesLabel.text = String(tweet!.favorites_count)
                     self.likeButton.setImage(UIImage(named: "star_filled.png"), forState: UIControlState.Normal)
                     self.likeButton.tintColor = UIColor.yellowColor()
+                    self.tweet.favorited = true
                 }
             })
         } else {//unlike it
@@ -118,6 +121,7 @@
                     self.numberoflikesLabel.text = String(tweet!.favorites_count)
                     self.likeButton.setImage(UIImage(named: "star_unfilled.png"), forState: UIControlState.Normal)
                     self.likeButton.tintColor = UIColor.blueColor()
+                    self.tweet.favorited = false
                 }
             })
         }

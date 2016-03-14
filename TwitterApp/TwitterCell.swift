@@ -28,6 +28,9 @@ class TwitterCell: UITableViewCell {
     
     @IBOutlet weak var retweetButton: UIButton!
     
+//    var retweeted : Bool = false
+//    var favorited : Bool = false
+    
     var tweet : Tweet! {
         didSet {
             nameLabel.text = tweet.user?.name as? String
@@ -91,12 +94,13 @@ class TwitterCell: UITableViewCell {
     }
     
     @IBAction func onRetweetButton(sender: AnyObject) {
-        if tweet.retweeted == false { //retweet it!
+        if self.tweet.retweeted == false { //retweet it!
             TwitterClient.sharedInstance.retweet(tweet.id! as String, completion: { (tweet: Tweet?, error: NSError?) -> () in
                 if tweet != nil {
                     self.retweetCountLabel.text = String(tweet!.retweet)
                     self.retweetButton.setImage(UIImage(named: "retweeted.png"), forState: UIControlState.Normal)
                     self.retweetButton.tintColor = UIColor.greenColor()
+                    self.tweet.retweeted = true
                 }
             })
         } else { //unretweet it
@@ -105,18 +109,20 @@ class TwitterCell: UITableViewCell {
                     self.retweetCountLabel.text = String(tweet!.retweet)
                     self.retweetButton.setImage(UIImage(named: "retweet.png"), forState: UIControlState.Normal)
                     self.retweetButton.tintColor = UIColor.blueColor()
+                    self.tweet.retweeted = false
     
                 }            })
         }
     }
     
     @IBAction func onLikeButton(sender: AnyObject) {
-        if tweet.favorited == false { //like it
+        if self.tweet.favorited == false { //like it
             TwitterClient.sharedInstance.favorite(["id" : tweet.id!], completion: { (tweet: Tweet?, error: NSError?) -> () in
                 if tweet != nil {
                     self.likeCountLabel.text = String(tweet!.favorites_count)
                     self.likeButton.setImage(UIImage(named: "star_filled.png"), forState: UIControlState.Normal)
                     self.likeButton.tintColor = UIColor.yellowColor()
+                    self.tweet.favorited = true
                 }
             })
         } else {//unlike it
@@ -125,6 +131,7 @@ class TwitterCell: UITableViewCell {
                     self.likeCountLabel.text = String(tweet!.favorites_count)
                     self.likeButton.setImage(UIImage(named: "star_unfilled.png"), forState: UIControlState.Normal)
                     self.likeButton.tintColor = UIColor.blueColor()
+                    self.tweet.favorited = false
                 }
             })
         }

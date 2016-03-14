@@ -16,8 +16,8 @@ class Tweet: NSObject {
     var retweet: Int = 0
     var favorites_count: Int = 0
     var user: User?
-    var retweeted: Bool?
-    var favorited: Bool?
+    var retweeted: Bool = false
+    var favorited: Bool = false
     
     init(dictionary: NSDictionary){
         id = dictionary["id_str"] as! String
